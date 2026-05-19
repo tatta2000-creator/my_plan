@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мой планировщик</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Основная навигация">
+        <div class="brand">Мой планировщик</div>
+        <nav class="nav-list">
+          <button class="nav-item active" type="button" data-screen="today">Сегодня</button>
+          <button class="nav-item" type="button" data-screen="calendar">Календарь</button>
+          <button class="nav-item" type="button" data-screen="tasks">Все задачи</button>
+          <button class="nav-item" type="button" data-screen="categories">Категории</button>
+          <button class="nav-item" type="button" data-screen="settings">Настройки</button>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <section class="screen active" id="screen-today" data-screen-panel="today">
+          <div class="today-header">
+            <div>
+              <p class="eyebrow">Сегодня</p>
+              <h1 id="today-date-title">Сегодня</h1>
+            </div>
+            <div class="today-controls">
+              <input id="today-search" type="search" placeholder="Поиск задач" />
+              <button class="primary-button" type="button" data-open-task-modal>+ Новая задача</button>
+            </div>
+          </div>
+
+          <div class="quick-add">
+            <input id="quick-task-title" type="text" placeholder="Что нужно сделать?" autocomplete="off" />
+            <button class="primary-button" id="quick-add-button" type="button">Добавить</button>
+          </div>
+
+          <div class="today-sections" id="today-sections" aria-live="polite">
+            <section class="task-section">
+              <div class="task-section-header">
+                <h2>3 главные задачи дня</h2>
+                <span class="section-count" id="main-focus-count">0</span>
+              </div>
+              <div class="task-list" id="main-focus-task-list"></div>
+            </section>
+
+            <section class="task-section">
+              <div class="task-section-header">
+                <h2>Просрочено</h2>
+                <span class="section-count" id="overdue-count">0</span>
+              </div>
+              <div class="task-list" id="overdue-task-list"></div>
+            </section>
+
+            <section class="task-section">
+              <div class="task-section-header">
+                <h2>Сегодня</h2>
+                <span class="section-count" id="today-count">0</span>
+              </div>
+              <div class="task-list" id="today-task-list"></div>
+            </section>
+
+            <section class="task-section">
+              <div class="task-section-header">
+                <h2>Ближайшие 7 дней</h2>
+                <span class="section-count" id="upcoming-count">0</span>
+              </div>
+              <div class="grouped-task-list" id="upcoming-task-list"></div>
+            </section>
+
+            <section class="task-section">
+              <div class="task-section-header">
+                <h2>Без даты</h2>
+                <span class="section-count" id="undated-count">0</span>
+              </div>
+              <div class="task-list" id="undated-task-list"></div>
+            </section>
+
+            <details class="task-section completed-section">
+              <summary>
+                <span>Выполнено сегодня</span>
+                <span class="section-count" id="completed-today-count">0</span>
+              </summary>
+              <div class="task-list" id="completed-today-task-list"></div>
+            </details>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-calendar" data-screen-panel="calendar" hidden>
+          <div class="calendar-header">
+            <div>
+              <p class="eyebrow">Календарь</p>
+              <h1 id="calendar-title">Календарь задач</h1>
+            </div>
+            <div class="calendar-toolbar">
+              <div class="segmented-control" aria-label="Режим календаря">
+                <button class="segment-button active" type="button" data-calendar-view="week">Неделя</button>
+                <button class="segment-button" type="button" data-calendar-view="month">Месяц</button>
+              </div>
+              <div class="calendar-nav">
+                <button class="secondary-button" id="calendar-prev" type="button" aria-label="Назад">&lt;-</button>
+                <button class="secondary-button" id="calendar-today" type="button">Сегодня</button>
+                <button class="secondary-button" id="calendar-next" type="button" aria-label="Вперед">-&gt;</button>
+              </div>
+            </div>
+          </div>
+          <div class="calendar-view" id="calendar-view"></div>
+        </section>
+
+        <section class="screen" id="screen-tasks" data-screen-panel="tasks" hidden>
+          <div class="screen-top">
+            <div class="screen-header">
+              <p class="eyebrow">Все задачи</p>
+              <h1>Список задач</h1>
+              <p class="screen-note">Полный список с поиском, фильтрами и сортировкой.</p>
+            </div>
+            <button class="primary-button" type="button" data-open-task-modal>Новая задача</button>
+          </div>
+          <div class="all-tasks-panel">
+            <label class="field">
+              <span>Поиск</span>
+              <input id="all-tasks-search" type="text" placeholder="Название, описание, подзадача, категория" />
+            </label>
+            <label class="field">
+              <span>Статус</span>
+              <select id="all-tasks-status-filter">
+                <option value="active">Все активные</option>
+                <option value="today">Сегодня</option>
+                <option value="overdue">Просроченные</option>
+                <option value="upcoming">Ближайшие 7 дней</option>
+                <option value="undated">Без даты</option>
+                <option value="completed">Выполненные</option>
+                <option value="canceled">Отмененные</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Категория</span>
+              <select id="all-tasks-category-filter">
+                <option value="all">Все категории</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Приоритет</span>
+              <select id="all-tasks-priority-filter">
+                <option value="all">Все приоритеты</option>
+                <option value="high">Высокий</option>
+                <option value="medium">Средний</option>
+                <option value="low">Низкий</option>
+                <option value="none">Без приоритета</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Повтор</span>
+              <select id="all-tasks-repeat-filter">
+                <option value="all">Все</option>
+                <option value="none">Без повтора</option>
+                <option value="daily">Ежедневно</option>
+                <option value="weekly">Еженедельно</option>
+                <option value="monthly">Ежемесячно</option>
+                <option value="yearly">Ежегодно</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Сортировка</span>
+              <select id="all-tasks-sort">
+                <option value="date">По дате</option>
+                <option value="priority">По приоритету</option>
+                <option value="category">По категории</option>
+                <option value="created">По времени создания</option>
+                <option value="overdue-first">Сначала просроченные</option>
+              </select>
+            </label>
+          </div>
+          <div class="task-list" id="all-task-list" aria-live="polite"></div>
+        </section>
+
+        <section class="screen" id="screen-categories" data-screen-panel="categories" hidden>
+          <div class="screen-top">
+            <div class="screen-header">
+              <p class="eyebrow">Категории</p>
+              <h1>Категории задач</h1>
+              <p class="screen-note">Название, цвет и количество активных задач.</p>
+            </div>
+          </div>
+          <div class="category-create-panel">
+            <input id="category-name-input" type="text" placeholder="Новая категория" />
+            <input id="category-color-input" type="color" value="#4F46E5" aria-label="Цвет категории" />
+            <button class="primary-button" id="create-category-button" type="button">Добавить</button>
+          </div>
+          <div class="category-grid" id="category-list"></div>
+        </section>
+
+        <section class="screen" id="screen-settings" data-screen-panel="settings" hidden>
+          <div class="screen-top">
+            <div class="screen-header">
+              <p class="eyebrow">Настройки</p>
+              <h1>Настройки планировщика</h1>
+              <p class="screen-note">Тема, акцент, размер карточек и резервные копии.</p>
+            </div>
+          </div>
+          <div class="settings-grid">
+            <section class="settings-card">
+              <h2>Интерфейс</h2>
+              <label class="field">
+                <span>Тема</span>
+                <select id="settings-theme">
+                  <option value="light">Светлая</option>
+                  <option value="dark">Темная</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Акцентный цвет</span>
+                <input id="settings-accent" type="color" value="#4F46E5" />
+              </label>
+              <label class="field">
+                <span>Размер карточек</span>
+                <select id="settings-card-size">
+                  <option value="standard">Стандартный</option>
+                  <option value="compact">Компактный</option>
+                </select>
+              </label>
+            </section>
+            <section class="settings-card">
+              <h2>Данные</h2>
+              <div class="settings-actions">
+                <button class="secondary-button" id="export-json-button" type="button">Экспорт JSON</button>
+                <label class="secondary-button import-button" for="import-json-input">Импорт JSON</label>
+                <input id="import-json-input" type="file" accept="application/json,.json" hidden />
+                <button class="danger-button" id="clear-data-button" type="button">Очистить все данные</button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <nav class="mobile-nav" aria-label="Нижняя навигация">
+        <button class="mobile-nav-item active" type="button" data-screen="today">Сегодня</button>
+        <button class="mobile-nav-item" type="button" data-screen="calendar">Календарь</button>
+        <button class="mobile-nav-item" type="button" data-screen="tasks">Задачи</button>
+        <button class="mobile-nav-item" type="button" data-screen="categories">Категории</button>
+        <button class="mobile-nav-item" type="button" data-screen="settings">Настройки</button>
+      </nav>
+    </div>
+
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <div class="modal-overlay" id="task-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+        <form id="task-form" novalidate>
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">Задача</p>
+              <h2 id="task-modal-title">Новая задача</h2>
+            </div>
+            <button class="icon-button" type="button" aria-label="Закрыть" data-close-task-modal>x</button>
+          </div>
+
+          <div class="form-error" id="task-form-error" hidden></div>
+
+          <div class="form-grid">
+            <label class="field field-full">
+              <span>Название *</span>
+              <input id="task-title" name="title" type="text" autocomplete="off" required />
+            </label>
+
+            <label class="field field-full">
+              <span>Описание</span>
+              <textarea id="task-description" name="description" rows="4"></textarea>
+            </label>
+
+            <label class="field">
+              <span>Категория</span>
+              <select id="task-category" name="categoryId"></select>
+            </label>
+
+            <label class="field">
+              <span>Дата</span>
+              <input id="task-date" name="dueDate" type="date" />
+            </label>
+
+            <label class="field">
+              <span>Время</span>
+              <input id="task-time" name="dueTime" type="time" />
+            </label>
+
+            <label class="field">
+              <span>Приоритет</span>
+              <select id="task-priority" name="priority">
+                <option value="none">Без приоритета</option>
+                <option value="low">Низкий</option>
+                <option value="medium">Средний</option>
+                <option value="high">Высокий</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Повтор</span>
+              <select id="task-repeat" name="repeat">
+                <option value="none">Не повторять</option>
+                <option value="daily">Ежедневно</option>
+                <option value="weekly">Еженедельно</option>
+                <option value="monthly">Ежемесячно</option>
+                <option value="yearly">Ежегодно</option>
+              </select>
+            </label>
+
+            <label class="checkbox-field">
+              <input id="task-main-focus" name="isMainFocus" type="checkbox" />
+              <span>Главная задача дня</span>
+            </label>
+          </div>
+
+          <section class="subtasks-section" aria-labelledby="subtasks-title">
+            <div class="section-title-row">
+              <h3 id="subtasks-title">Подзадачи</h3>
+            </div>
+            <div class="subtask-input-row">
+              <input id="subtask-title" type="text" placeholder="Новая подзадача" />
+              <button class="secondary-button subtask-add-button" id="add-subtask-button" type="button" aria-label="Добавить подзадачу">+</button>
+            </div>
+            <div class="subtask-list" id="subtask-list"></div>
+          </section>
+
+          <div class="modal-actions">
+            <button class="danger-button" id="delete-task-button" type="button">Удалить</button>
+            <div class="modal-actions-main">
+              <button class="secondary-button" type="button" data-close-task-modal>Отмена</button>
+              <button class="primary-button" type="submit">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
